@@ -1,0 +1,27 @@
+---
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - skip: true
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^Merge branch'
+  groups:
+    - title: New features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: Bug fixes
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: Dependency upgrades
+      regexp: '.*?chore\(deps\):.*$'
+      order: 2
+    - title: Other changes
+      order: 999
+release:
+  mode: replace
