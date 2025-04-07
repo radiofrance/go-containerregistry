@@ -30,17 +30,10 @@
   ],
   "customManagers": [
     {
-      "description": "Update *_VERSION variables in Makefiles (https://docs.renovatebot.com/presets-customManagers/#custommanagersmakefileversions)",
-      "customType": "regex",
-      "fileMatch": ["(^|/)Makefile$"],
-      "matchStrings": [
-        "#\\s*renovate:\\s*datasource=(?<datasource>[a-zA-Z0-9-._]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s+[A-Za-z0-9_]+?_VERSION\\s*:*\\??=\\s*[\"']?(?<currentValue>.+?)[\"']?\\s"
-      ]
-    },
-    {
-      "description": "Update variables in GitHub Actions files",
+      "description": "Update variables in Makefiles and GitHub Actions files (https://docs.renovatebot.com/presets-customManagers/#custommanagersmakefileversions)",
       "customType": "regex",
       "fileMatch": [
+        "(^|/)Makefile$",
         "^\\.github/workflows/.*\\.ya?ml"
       ],
       "matchStrings": [
