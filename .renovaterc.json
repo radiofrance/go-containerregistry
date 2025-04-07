@@ -15,7 +15,7 @@
       "description": "Group golangci-lint packages",
       "matchPackageNames": [
         "golangci/golangci-lint",
-        "golangci/golangci-lint-actions",
+        "golangci/golangci-lint-action",
         "radiofrance/lint-config"
       ],
       "groupName": "golangci-lint",
@@ -38,13 +38,13 @@
       ]
     },
     {
-      "description": "Update *-version variables in GitHub Actions files",
+      "description": "Update *version variables in GitHub Actions files",
       "customType": "regex",
       "fileMatch": [
         "^\\.github/workflows/.*\\.ya?ml"
       ],
       "matchStrings": [
-        "#\\s*renovate:\\s*datasource=(?<datasource>[a-zA-Z0-9-._]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s+[A-Za-z0-9-]+?-version\\s*:\\s*[\"']?(?<currentValue>.+?)[\"']?\\s"
+        "#\\s*renovate:\\s*datasource=(?<datasource>[a-zA-Z0-9-._]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s+[A-Za-z0-9-]+?version\\s*:\\s*[\"']?(?<currentValue>.+?)[\"']?\\s"
       ]
     }
   ]
