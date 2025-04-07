@@ -53,7 +53,7 @@ func (r *Registry) RegistryStr() string {
 func (r *Registry) initAuthenticator() error {
 	gcrJSONKeyPath := os.Getenv(EnvGcrJSONKeyPath)
 	if gcrJSONKeyPath != "" {
-		key, err := os.ReadFile(gcrJSONKeyPath)
+		key, err := os.ReadFile(gcrJSONKeyPath) //nolint:gosec
 		if err != nil {
 			return fmt.Errorf("failed to resolve authenticator using gcr json key at %s: %w", gcrJSONKeyPath, err)
 		}

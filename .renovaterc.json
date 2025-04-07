@@ -1,55 +1,27 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    ":automergeDigest",
-    ":automergeLinters",
-    ":automergeMinor",
-    ":automergePatch",
-    ":automergePr",
-    ":automergeRequireAllStatusChecks",
-    ":automergeTesters",
-    ":combinePatchMinorReleases",
-    ":dependencyDashboard",
-    ":enableVulnerabilityAlerts",
-    ":gitSignOff",
-    ":ignoreModulesAndTests",
-    ":ignoreUnstable",
-    ":label(dependencies)",
-    ":maintainLockFilesMonthly",
-    ":prConcurrentLimitNone",
-    ":prHourlyLimitNone",
-    ":prImmediately",
-    ":semanticCommitScope(deps)",
-    ":separateMultipleMajorReleases",
-    "group:kubernetes",
-    "helpers:pinGitHubActionDigests",
-    "customManagers:dockerfileVersions"
+    "config:best-practices"
   ],
   "packageRules": [
     {
-      "description": "Update digest once a month",
-      "matchUpdateTypes": [
-        "digest"
-      ],
-      "extends": [
-        "schedule:monthly"
-      ]
+      "description": "Update Go directives in go.mod files",
+      "matchManagers": ["gomod"],
+      "matchDepNames": ["go"],
+      "matchDepTypes": ["golang"],
+      "rangeStrategy": "bump"
     },
     {
-      "description": "Group golang version bumps by datasource",
-      "matchDatasources": [
-        "golang-version"
-      ],
-      "groupName": "golang"
-    },
-    {
-      "description": "Group golang version bumps by package",
+      "description": "Group golangci-lint packages",
       "matchPackageNames": [
-        "go",
-        "golang",
-        "golang/go"
+        "golangci/golangci-lint",
+        "golangci/golangci-lint-actions",
+        "radiofrance/lint-config"
       ],
-      "groupName": "golang"
+      "groupName": "golangci-lint",
+      "groupSlug": "golangci-lint",
+      "separateMinorPatch": false,
+      "separateMajorMinor": false
     }
   ],
   "postUpdateOptions": [
@@ -58,14 +30,22 @@
   ],
   "customManagers": [
     {
+      "description": "Update *_VERSION variables in Makefiles (https://docs.renovatebot.com/presets-customManagers/#custommanagersmakefileversions)",
+      "customType": "regex",
+      "fileMatch": ["(^|/)Makefile$"],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>[a-zA-Z0-9-._]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s+[A-Za-z0-9_]+?_VERSION\\s*:*\\??=\\s*[\"']?(?<currentValue>.+?)[\"']?\\s"
+      ]
+    },
+    {
+      "description": "Update *-version variables in GitHub Actions files",
       "customType": "regex",
       "fileMatch": [
         "^\\.github/workflows/.*\\.ya?ml"
       ],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>.*?)(?: depName=(?<depName>.*?))?(?: versioning=(?<versioning>.*?))?\\s.*version: ['\"]?(?<currentValue>[^'\"\\s]+)['\"]?\\s"
-      ],
-      "versioningTemplate": "{{#if versioning}}{{versioning}}{{else}}semver{{/if}}"
+        "#\\s*renovate:\\s*datasource=(?<datasource>[a-zA-Z0-9-._]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s+[A-Za-z0-9-]+?-version\\s*:\\s*[\"']?(?<currentValue>.+?)[\"']?\\s"
+      ]
     }
   ]
 }
