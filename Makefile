@@ -19,7 +19,7 @@ help: ## Display this message
 qa: lint ## Run all Q.A.
 
 # renovate: datasource=github-tags depName=radiofrance/lint-config
-LINT_CONFIG_VERSION = v1.1.0
+LINT_CONFIG_VERSION = v1.1.1
 
 lint: ## Lint source code
 	curl -o .golangci.yml https://raw.githubusercontent.com/radiofrance/lint-config/$(LINT_CONFIG_VERSION)/.golangci.yml
