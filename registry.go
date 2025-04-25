@@ -43,37 +43,6 @@ func (r *Registry) RegistryStr() string {
 	return strings.Split(r.URL, "/")[0]
 }
 
-// initAuthenticator returns an authn.Authenticator used by the docker golang library
-// to authenticate with a docker registry
-//
-// We generate the authn.Authenticator once, otherwise the resolver will try to resolve
-// the gcloud credentials before each api call. We check for the presence of an environment
-// variable GCR_JSON_KEY_PATH. If present, we use it, otherwise, we default to the default
-// keychain mechanism.
-func (r *Registry) initAuthenticator() error {
-	gcrJSONKeyPath := os.Getenv(EnvGcrJSONKeyPath)
-	if gcrJSONKeyPath != "" {
-		key, err := os.ReadFile(gcrJSONKeyPath) //nolint:gosec
-		if err != nil {
-			return fmt.Errorf("failed to resolve authenticator using gcr json key at %s: %w", gcrJSONKeyPath, err)
-		}
-		r.authenticator = &authn.Basic{
-			Username: "_json_key",
-			Password: string(key),
-		}
-
-		return nil
-	}
-
-	var err error
-	r.authenticator, err = authn.DefaultKeychain.Resolve(r)
-	if err != nil {
-		return fmt.Errorf("failed to resolve authenticator using default keychain: %w", err)
-	}
-
-	return nil
-}
-
 // Head is a wrapper to the remote.Head method.
 func (r *Registry) Head(imageRef string) (*v1.Descriptor, error) {
 	ref, err := name.ParseReference(imageRef)
@@ -148,6 +117,37 @@ func (r *Registry) Retag(existingRef, toCreateRef string) error {
 
 	if err := remote.Tag(newTag, image, remote.WithAuth(r.authenticator)); err != nil {
 		return fmt.Errorf("failed to create tag (from %s to %s): %w", existingRef, toCreateRef, err)
+	}
+
+	return nil
+}
+
+// initAuthenticator returns an authn.Authenticator used by the docker golang library
+// to authenticate with a docker registry
+//
+// We generate the authn.Authenticator once, otherwise the resolver will try to resolve
+// the gcloud credentials before each api call. We check for the presence of an environment
+// variable GCR_JSON_KEY_PATH. If present, we use it, otherwise, we default to the default
+// keychain mechanism.
+func (r *Registry) initAuthenticator() error {
+	gcrJSONKeyPath := os.Getenv(EnvGcrJSONKeyPath)
+	if gcrJSONKeyPath != "" {
+		key, err := os.ReadFile(gcrJSONKeyPath) //nolint:gosec
+		if err != nil {
+			return fmt.Errorf("failed to resolve authenticator using gcr json key at %s: %w", gcrJSONKeyPath, err)
+		}
+		r.authenticator = &authn.Basic{
+			Username: "_json_key",
+			Password: string(key),
+		}
+
+		return nil
+	}
+
+	var err error
+	r.authenticator, err = authn.DefaultKeychain.Resolve(r)
+	if err != nil {
+		return fmt.Errorf("failed to resolve authenticator using default keychain: %w", err)
 	}
 
 	return nil
