@@ -26,7 +26,8 @@ type Registry struct {
 func New(url string) (*Registry, error) {
 	r := Registry{URL: url}
 
-	if err := r.initAuthenticator(); err != nil {
+	err := r.initAuthenticator()
+	if err != nil {
 		return nil, fmt.Errorf("failed to init authenticator: %w", err)
 	}
 
@@ -65,7 +66,8 @@ func (r *Registry) RefExists(imageRef string) (bool, error) {
 		return false, fmt.Errorf("failed to parse image reference %s: %w", imageRef, err)
 	}
 
-	if _, err = remote.Head(ref, remote.WithAuth(r.authenticator)); err != nil {
+	_, err = remote.Head(ref, remote.WithAuth(r.authenticator))
+	if err != nil {
 		var tErr *transport.Error
 		if errors.As(err, &tErr) && tErr.StatusCode == http.StatusNotFound {
 			return false, nil
@@ -115,7 +117,8 @@ func (r *Registry) Retag(existingRef, toCreateRef string) error {
 		return fmt.Errorf("failed to create tag reference %s: %w", toCreateRef, err)
 	}
 
-	if err := remote.Tag(newTag, image, remote.WithAuth(r.authenticator)); err != nil {
+	err = remote.Tag(newTag, image, remote.WithAuth(r.authenticator))
+	if err != nil {
 		return fmt.Errorf("failed to create tag (from %s to %s): %w", existingRef, toCreateRef, err)
 	}
 
@@ -136,6 +139,7 @@ func (r *Registry) initAuthenticator() error {
 		if err != nil {
 			return fmt.Errorf("failed to resolve authenticator using gcr json key at %s: %w", gcrJSONKeyPath, err)
 		}
+
 		r.authenticator = &authn.Basic{
 			Username: "_json_key",
 			Password: string(key),
@@ -145,6 +149,7 @@ func (r *Registry) initAuthenticator() error {
 	}
 
 	var err error
+
 	r.authenticator, err = authn.DefaultKeychain.Resolve(r)
 	if err != nil {
 		return fmt.Errorf("failed to resolve authenticator using default keychain: %w", err)
