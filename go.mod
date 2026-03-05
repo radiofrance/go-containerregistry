@@ -1,6 +1,6 @@
 module github.com/radiofrance/go-containerregistry
 
-go 1.25.6
+go 1.26.0
 
 require github.com/google/go-containerregistry v0.20.7
 
