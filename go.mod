@@ -2,7 +2,7 @@ module github.com/radiofrance/go-containerregistry
 
 go 1.26.0
 
-require github.com/google/go-containerregistry v0.21.1
+require github.com/google/go-containerregistry v0.21.2
 
 require (
 	github.com/containerd/stargz-snapshotter/estargz v0.18.2 // indirect
